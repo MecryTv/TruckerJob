@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import axios from 'axios';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NuiService {
   private visible = new BehaviorSubject<boolean>(false);
-  public vibible$ = this.visible.asObservable();
+  public visible$ = this.visible.asObservable();
 
-  constructor() {
-    window.addEventListener('message', this.onMessageReceived.bind(this));
+  constructor(private http: HttpClient) {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('message', this.onMessageReceived.bind(this));
+    }
   }
 
   private onMessageReceived(event: MessageEvent) {
@@ -31,8 +33,12 @@ export class NuiService {
   }
 
   private postMessage(event: string, data: any = {}) {
-    axios.post(`https://TruckerJob/${event}`, {
-      ...data,
-    });
+    if (typeof window !== 'undefined') {
+      this.http
+        .post(`https://TruckerJob/${event}`, {
+          ...data,
+        })
+        .subscribe();
+    }
   }
 }

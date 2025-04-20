@@ -17,7 +17,7 @@ export class AppComponent {
   constructor(private nuiService: NuiService) {}
 
   ngOnInit() {
-    this.nuiService.vibible$
+    this.nuiService.visible$
       .pipe(takeUntil(this.destroy$))
       .subscribe((visible) => {
         this.visible = visible;
