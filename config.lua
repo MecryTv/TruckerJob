@@ -1,3 +1,3 @@
 Config = {}
 
-Config.OpenUIKey = 288
+Config.OpenUIKey = '288'

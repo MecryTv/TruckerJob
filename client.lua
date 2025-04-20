@@ -1,21 +1,30 @@
-local uiOpen = false
+local display = false
 
--- Toggle UI mit F1
-Citizen.CreateThread(function()
-    while true do
-        Citizen.Wait(0)
-        -- 288 ist der Keycode für F1
-        if IsControlJustReleased(0, 288) then
-            uiOpen = not uiOpen
-            SetNuiFocus(uiOpen, uiOpen)
-            SendNUIMessage({ action = uiOpen and 'open' or 'close' })
-        end
-    end
+RegisterCommand("truckerjob:toggleUI", function ()
+    SetDisplay(not display)
+end, false)
+
+RegisterKeyMapping("truckerjob:toggleUI", "Toggle Trucker Job UI", "keyboard", Config.OpenUIKey)
+
+RegisterNUICallback("close", function (data, cb)
+    SetDisplay(false)
+    cb('ok')
 end)
 
-RegisterNUICallback('close', function(data, cb)
-    uiOpen = false
-    SetNuiFocus(false, false)
-    SendNUIMessage({ action = 'close' })
-    if cb then cb('ok') end
+RegisterNUICallback("action", function (data, cb)
+    TriggerEvent("chat:addMessage", {
+        color = { 255, 255, 255 },
+        multiline = true,
+        args = {"TruckerJob", "You have selected: " .. data.action}
+    })
+    cb({ status = "success" })
 end)
+
+function SetDisplay(bool) 
+    display = bool
+    SetNuiFocus(bool, bool)
+    SendNUIMessage({
+        type = "ui",
+        status = bool
+    })
+end
